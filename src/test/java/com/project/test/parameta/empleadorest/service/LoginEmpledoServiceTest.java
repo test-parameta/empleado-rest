@@ -23,9 +23,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import static com.project.test.parameta.empleadorest.utils.constants.Constantes.ERROR_CREDENCIALES;
 import static com.project.test.parameta.empleadorest.utils.constants.Constantes.INICIO_EXITOSO;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -44,7 +44,7 @@ public class LoginEmpledoServiceTest {
     private EmpleadoMapper empleadoMapper;
 
     @Test
-    void loginExitoso() throws JsonProcessingException {
+    void loginExitoso() {
         // Datos de prueba
         String correo = "test@example.com";
         String password = "password123";
@@ -52,13 +52,19 @@ public class LoginEmpledoServiceTest {
         LoginEmpleadoDTO loginEmpleadoDTO = new LoginEmpleadoDTO();
         loginEmpleadoDTO.setCorreo(correo);
         loginEmpleadoDTO.setPassword(password);
+
         EmpleadoEntity empleadoEntity = new EmpleadoEntity();
         EmpleadoDTO empleadoDTO = new EmpleadoDTO();
         UserDetails userDetails = new EmpleadoSeguridadDTO(empleadoDTO);
 
-        // Configurar mocks
+        // Crear un mock explícito para Authentication
+        Authentication authenticationMock = mock(Authentication.class);
+
+        // Configurar el comportamiento de los mocks
+        when(authenticationMock.isAuthenticated()).thenReturn(true);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenReturn(mock(Authentication.class));
+                .thenReturn(authenticationMock);
+
         when(empleadoRepository.findByCorreoEmpleado(correo)).thenReturn(empleadoEntity);
         when(empleadoMapper.entityToDto(empleadoEntity)).thenReturn(empleadoDTO);
         when(jwtService.getToken(userDetails)).thenReturn(token);
@@ -70,6 +76,7 @@ public class LoginEmpledoServiceTest {
         assertEquals(HttpStatus.OK, respuesta.getStatus());
         assertEquals(INICIO_EXITOSO, respuesta.getMessage());
         assertNotNull(respuesta.getData());
+
         AuthResponseDTO authResponse = (AuthResponseDTO) respuesta.getData();
         assertEquals(token, authResponse.getToken());
 
@@ -79,4 +86,29 @@ public class LoginEmpledoServiceTest {
         verify(jwtService, times(1)).getToken(userDetails);
     }
 
+    @Test
+    void loginFallido() {
+        // Datos de prueba
+        String correo = "test@example.com";
+        String password = "password123";
+        LoginEmpleadoDTO loginEmpleadoDTO = new LoginEmpleadoDTO();
+        loginEmpleadoDTO.setCorreo(correo);
+        loginEmpleadoDTO.setPassword(password);
+
+        // Configurar mocks
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                .thenThrow(new RuntimeException("Error inesperado"));
+
+        // Llamar al método
+        RespuestaGeneralDTO respuesta = loginEmpleadoService.loginEmpleado(loginEmpleadoDTO);
+
+        // Verificaciones
+        assertEquals(HttpStatus.UNAUTHORIZED, respuesta.getStatus());
+        assertEquals(ERROR_CREDENCIALES, respuesta.getMessage());
+        assertNull(respuesta.getData());
+
+        // Verificar interacciones
+        verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
+        verifyNoInteractions(empleadoRepository, jwtService, empleadoMapper);
+    }
 }

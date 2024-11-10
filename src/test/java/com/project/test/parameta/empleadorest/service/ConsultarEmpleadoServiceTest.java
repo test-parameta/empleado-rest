@@ -4,7 +4,6 @@ import com.project.test.parameta.commons.dto.RespuestaGeneralDTO;
 import com.project.test.parameta.commons.util.mappers.EmpleadoMapper;
 import com.project.test.parameta.empleadorest.repository.EmpleadoRepository;
 import com.project.test.parameta.empleadorest.service.impl.ConsultarEmpleadoService;
-import com.project.test.parameta.empleadorest.soap.RespuestaGeneralElement;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

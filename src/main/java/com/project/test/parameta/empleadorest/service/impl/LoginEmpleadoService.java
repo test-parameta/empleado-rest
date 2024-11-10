@@ -21,23 +21,50 @@ import org.springframework.stereotype.Service;
 
 import static com.project.test.parameta.empleadorest.utils.constants.Constantes.*;
 
+/**
+ * Servicio para gestionar el inicio de sesión de empleados.
+ * <p>
+ * Esta clase implementa la interfaz {@link ILoginEmpleadoService} y se encarga
+ * de realizar la autenticación del empleado, generar un token JWT y devolver
+ * la información relacionada con el inicio de sesión.
+ * </p>
+ */
 @Service
 @Log4j2
 public class LoginEmpleadoService implements ILoginEmpleadoService {
 
+    /**
+     * Repositorio para gestionar los datos de empleados.
+     */
     private final EmpleadoRepository empleadoRepository;
 
+    /**
+     * Manejador de autenticación para validar las credenciales del empleado.
+     */
     private final AuthenticationManager authenticationManager;
-
+    /**
+     * Servicio para generar tokens JWT.
+     */
     private final JwtService jwtService;
 
+    /**
+     * Mapper para transformar entidades de empleado a DTOs.
+     */
     private final EmpleadoMapper empleadoMapper;
 
+    /**
+     * Constructor para inyectar las dependencias necesarias.
+     *
+     * @param empleadoRepository      el repositorio de empleados, identificado con {@link Qualifier}.
+     * @param authenticationManager   el manejador de autenticación para validar credenciales.
+     * @param jwtService              el servicio para generar tokens JWT.
+     * @param empleadoMapper          el mapper para transformar entidades de empleados a DTOs.
+     */
     public LoginEmpleadoService(
             @Qualifier(REST) EmpleadoRepository empleadoRepository,
-                                AuthenticationManager authenticationManager,
-                                JwtService jwtService,
-                                EmpleadoMapper empleadoMapper) {
+            AuthenticationManager authenticationManager,
+            JwtService jwtService,
+            EmpleadoMapper empleadoMapper) {
         this.empleadoRepository = empleadoRepository;
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;

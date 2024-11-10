@@ -152,25 +152,6 @@
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.10</version>
 				<configuration>
-					<rules>
-						<rule>
-							<element>BUNDLE</element>
-							<limits>
-								<!-- Cobertura mínima por líneas -->
-								<limit>
-									<counter>LINE</counter>
-									<value>COVEREDRATIO</value>
-									<minimum>0</minimum>
-								</limit>
-								<!-- Cobertura mínima por métodos -->
-								<limit>
-									<counter>METHOD</counter>
-									<value>COVEREDRATIO</value>
-									<minimum>0</minimum>
-								</limit>
-							</limits>
-						</rule>
-					</rules>
 					<excludes>
 						<exclude>**/configuration/**</exclude>
 						<exclude>**/dto/**</exclude>
@@ -180,17 +161,36 @@
 				</configuration>
 				<executions>
 					<execution>
-						<id>prepare-agent</id>
 						<goals>
 							<goal>prepare-agent</goal>
 						</goals>
 					</execution>
 					<execution>
 						<id>report</id>
-						<phase>verify</phase>
+						<phase>prepare-package</phase>
 						<goals>
 							<goal>report</goal>
 						</goals>
+					</execution>
+					<execution>
+						<id>jacoco-check</id>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<rule>
+									<element>BUNDLE</element>
+									<limits>
+										<limit>
+											<counter>LINE</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>80%</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>

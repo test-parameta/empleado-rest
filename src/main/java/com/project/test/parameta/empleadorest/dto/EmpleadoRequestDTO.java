@@ -12,6 +12,15 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * DTO que representa los datos requeridos para registrar un empleado.
+ * <p>
+ * Este objeto incluye la información básica de un empleado, como nombre,
+ * tipo y número de documento, fechas clave, cargo y salario.
+ * Incluye validaciones a nivel de campo para garantizar la integridad
+ * de los datos durante el proceso de solicitud.
+ * </p>
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

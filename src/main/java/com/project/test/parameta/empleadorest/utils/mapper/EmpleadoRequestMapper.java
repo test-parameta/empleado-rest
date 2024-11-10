@@ -13,37 +13,77 @@ import org.mapstruct.Mapper;
 import java.text.ParseException;
 import java.util.Date;
 
+/**
+ * Mapper para transformar objetos relacionados con empleados.
+ * <p>
+ * Esta interfaz proporciona métodos para convertir entre DTOs de solicitud,
+ * DTOs internos y DTOs de respuesta de empleados, integrando validaciones y
+ * formateo de datos como fechas y enumeraciones.
+ * </p>
+ */
 @Mapper(componentModel = "spring")
 public interface EmpleadoRequestMapper {
 
+    /**
+     * Convierte un objeto {@link EmpleadoRequestDTO} en un {@link EmpleadoDTO}.
+     * <p>
+     * Realiza las transformaciones necesarias, incluyendo:
+     * <ul>
+     *   <li>Conversión de fechas a objetos {@link Date} mediante utilidades.</li>
+     *   <li>Transformación de enumeraciones para tipos de documento y cargos.</li>
+     * </ul>
+     * </p>
+     *
+     * @param requestDTO el objeto de solicitud {@link EmpleadoRequestDTO}.
+     * @return un objeto {@link EmpleadoDTO} con los datos transformados.
+     * @throws ParseException si ocurre un error al convertir fechas.
+     */
     default EmpleadoDTO requestToDto(EmpleadoRequestDTO requestDTO) throws ParseException {
         return EmpleadoDTO.builder()
                 .nombreEmpleado(requestDTO.getNombres())
                 .apellidosEmpleado(requestDTO.getApellidos())
-                .tipoDocumentoFk(TipoDocumentoDTO.builder().nombreTipoDocumento(TipoDocumentoEnum.valueOf(requestDTO.getTipoDocumento())).build())
+                .tipoDocumentoFk(TipoDocumentoDTO.builder()
+                        .nombreTipoDocumento(TipoDocumentoEnum.valueOf(requestDTO.getTipoDocumento()))
+                        .build())
                 .numeroDocumentoEmpleado(requestDTO.getNumeroDocumento())
                 .fechaNacimientoEmpleado(Utilidades.checkType(requestDTO.getFechaNacimiento(), Date.class).orElse(null))
                 .fechaVinculacionCompaniaEmpleado(Utilidades.checkType(requestDTO.getFechaVinculacionComania(), Date.class).orElse(null))
-                .cargoFk(CargoDTO.builder().nombreCargo(CargoEnum.valueOf(requestDTO.getCargo())).build())
+                .cargoFk(CargoDTO.builder()
+                        .nombreCargo(CargoEnum.valueOf(requestDTO.getCargo()))
+                        .build())
                 .salarioEmpleado(requestDTO.getSalario())
                 .build();
     }
 
+    /**
+     * Convierte un objeto {@link EmpleadoDTO} en un {@link EmpleadoResponseDTO}.
+     * <p>
+     * Realiza las transformaciones necesarias, incluyendo:
+     * <ul>
+     *   <li>Formateo de fechas a cadenas de texto.</li>
+     *   <li>Concatenación de nombres y descripciones para enumeraciones de tipo de documento y cargo.</li>
+     * </ul>
+     * </p>
+     *
+     * @param requestDTO el objeto {@link EmpleadoDTO} con los datos del empleado.
+     * @return un objeto {@link EmpleadoResponseDTO} con los datos preparados para la respuesta.
+     */
     default EmpleadoResponseDTO dtoToResponse(EmpleadoDTO requestDTO) {
         return EmpleadoResponseDTO.builder()
                 .nombres(requestDTO.getNombreEmpleado())
                 .apellidos(requestDTO.getApellidosEmpleado())
                 .tipoDocumento(
                         requestDTO.getTipoDocumentoFk().getNombreTipoDocumento().name() + "-" +
-                        requestDTO.getTipoDocumentoFk().getNombreTipoDocumento().getDescripcion())
+                                requestDTO.getTipoDocumentoFk().getNombreTipoDocumento().getDescripcion())
                 .numeroDocumento(requestDTO.getNumeroDocumentoEmpleado())
                 .fechaNacimiento(Utilidades.dateToString(requestDTO.getFechaNacimientoEmpleado()))
                 .fechaVinculacionComania(Utilidades.dateToString(requestDTO.getFechaVinculacionCompaniaEmpleado()))
-                .cargo(requestDTO.getCargoFk().getNombreCargo().name() + "-" + requestDTO.getCargoFk().getNombreCargo().getDescripcion())
+                .cargo(
+                        requestDTO.getCargoFk().getNombreCargo().name() + "-" +
+                                requestDTO.getCargoFk().getNombreCargo().getDescripcion())
                 .correo(requestDTO.getCorreoEmpleado())
                 .password(requestDTO.getHashPassword())
-                .salario(requestDTO.getSalarioEmpleado()).build();
+                .salario(requestDTO.getSalarioEmpleado())
+                .build();
     }
-
-
 }

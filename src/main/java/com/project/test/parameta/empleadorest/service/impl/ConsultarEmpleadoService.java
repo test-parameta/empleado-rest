@@ -11,14 +11,33 @@ import org.springframework.stereotype.Service;
 
 import static com.project.test.parameta.empleadorest.utils.constants.Constantes.*;
 
+/**
+ * Implementación del servicio para consultar empleados.
+ * <p>
+ * Esta clase se encarga de obtener la información de todos los empleados
+ * registrados en el sistema y mapearlos a DTOs para su presentación.
+ * </p>
+ */
 @Service
 @Log4j2
 public class ConsultarEmpleadoService implements IConsultarEmpleadoService {
 
+    /**
+     * Repositorio para acceder a los datos de los empleados.
+     */
     private final EmpleadoRepository empleadoRepository;
 
+    /**
+     * Mapper para transformar las entidades de empleado a DTOs.
+     */
     private final EmpleadoMapper empleadoMapper;
 
+    /**
+     * Constructor que inyecta las dependencias necesarias.
+     *
+     * @param empleadoRepository el repositorio de empleados, calificado con {@link Qualifier} para identificar su implementación.
+     * @param empleadoMapper     el mapper para convertir entidades de empleados a DTOs.
+     */
     public ConsultarEmpleadoService(
             @Qualifier(REST) EmpleadoRepository empleadoRepository,
             EmpleadoMapper empleadoMapper) {
