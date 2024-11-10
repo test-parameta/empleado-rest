@@ -39,17 +39,29 @@ public interface EmpleadoRequestMapper {
      * @throws ParseException si ocurre un error al convertir fechas.
      */
     default EmpleadoDTO requestToDto(EmpleadoRequestDTO requestDTO) throws ParseException {
+        TipoDocumentoEnum tipoDocumentoEnum;
+        CargoEnum cargoEnum;
+        if(TipoDocumentoEnum.esDescripcion(requestDTO.getTipoDocumento())){
+            tipoDocumentoEnum = TipoDocumentoEnum.valueOf(TipoDocumentoEnum.obtenerNombrePorDescripcion(requestDTO.getTipoDocumento()));
+        }else{
+            tipoDocumentoEnum = TipoDocumentoEnum.valueOf(requestDTO.getTipoDocumento());
+        }
+        if(CargoEnum.esDescripcion(requestDTO.getCargo())){
+            cargoEnum = CargoEnum.valueOf(CargoEnum.obtenerNombrePorDescripcion(requestDTO.getCargo()));
+        }else{
+            cargoEnum = CargoEnum.valueOf(requestDTO.getCargo());
+        }
         return EmpleadoDTO.builder()
                 .nombreEmpleado(requestDTO.getNombres())
                 .apellidosEmpleado(requestDTO.getApellidos())
                 .tipoDocumentoFk(TipoDocumentoDTO.builder()
-                        .nombreTipoDocumento(TipoDocumentoEnum.valueOf(requestDTO.getTipoDocumento()))
+                        .nombreTipoDocumento(tipoDocumentoEnum)
                         .build())
                 .numeroDocumentoEmpleado(requestDTO.getNumeroDocumento())
                 .fechaNacimientoEmpleado(Utilidades.checkType(requestDTO.getFechaNacimiento(), Date.class).orElse(null))
                 .fechaVinculacionCompaniaEmpleado(Utilidades.checkType(requestDTO.getFechaVinculacionComania(), Date.class).orElse(null))
                 .cargoFk(CargoDTO.builder()
-                        .nombreCargo(CargoEnum.valueOf(requestDTO.getCargo()))
+                        .nombreCargo(cargoEnum)
                         .build())
                 .salarioEmpleado(requestDTO.getSalario())
                 .build();
