@@ -1,19 +1,17 @@
 package com.project.test.parameta.empleadorest.controller;
 
-import com.project.test.parameta.commons.dto.CargoDTO;
-import com.project.test.parameta.commons.dto.EmpleadoDTO;
 import com.project.test.parameta.commons.dto.RespuestaGeneralDTO;
-import com.project.test.parameta.commons.dto.TipoDocumentoDTO;
-import com.project.test.parameta.commons.util.helper.Utilidades;
+import com.project.test.parameta.empleadorest.dto.EmpleadoRequestDTO;
 import com.project.test.parameta.empleadorest.dto.LoginEmpleadoDTO;
 import com.project.test.parameta.empleadorest.service.ILoginEmpleadoService;
-import com.project.test.parameta.empleadorest.service.impl.EmpleadoService;
+import com.project.test.parameta.empleadorest.service.impl.GuardarEmpleadoService;
+import com.project.test.parameta.empleadorest.utils.mapper.EmpleadoRequestMapper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
-import java.util.Date;
 
 
 @RestController
@@ -23,7 +21,9 @@ public class EmpleadoController {
 
     private final ILoginEmpleadoService iLoginEmpleadoService;
 
-    private final EmpleadoService empleadoService;
+    private final GuardarEmpleadoService empleadoService;
+
+    private final EmpleadoRequestMapper empleadoRequestMapper;
 
     @PostMapping("/login")
     public ResponseEntity<RespuestaGeneralDTO> loginEmpleado(@RequestBody LoginEmpleadoDTO loginEmpleadoDTO) {
@@ -31,21 +31,12 @@ public class EmpleadoController {
         return ResponseEntity.status(respuestaGeneralDTO.getStatus()).body(respuestaGeneralDTO);
     }
 
-    @GetMapping("/empleados")
-    public ResponseEntity<RespuestaGeneralDTO> buscarEmpleado(@RequestParam String nombres,
-                                                              @RequestParam String apellidos,
-                                                              @RequestParam String numeroDocumento,
-                                                              @RequestParam String fechaNacimiento,
-                                                              @RequestParam String fechaVinculacion,
-                                                              @RequestParam String nombreCargo,
-                                                              @RequestParam Double salario,
-                                                              @RequestParam String nombreTipoDocumento
+    @GetMapping("/guardar")
+    public ResponseEntity<RespuestaGeneralDTO> guardarEmpleado(
+            @Valid EmpleadoRequestDTO empleadoRequestDTO
     ) throws ParseException {
-        EmpleadoDTO empleadoDTO = EmpleadoDTO.builder().nombreEmpleado(Utilidades.checkType(nombres, String.class).orElse(null)).apellidosEmpleado(Utilidades.checkType(apellidos, String.class).orElse(null))
-                .numeroDocumentoEmpleado(Utilidades.checkType(numeroDocumento, String.class).orElse(null)).fechaNacimientoEmpleado(Utilidades.validarFormatoFecha(fechaNacimiento))
-                .fechaVinculacionEmpleado(Utilidades.validarFormatoFecha(fechaVinculacion)).cargoFk(CargoDTO.builder().nombreCargo(Utilidades.checkType(nombreCargo, String.class).orElse(null)).build()).salarioEmpleado(Utilidades.checkType(salario, Double.class).orElse(null))
-                .tipoDocumentoFk(TipoDocumentoDTO.builder().nombreTipoDocumento(Utilidades.checkType(nombreTipoDocumento, String.class).orElse(null)).build()).build();
-        return ResponseEntity.ok(null);
+        RespuestaGeneralDTO respuestaGeneralDTO = empleadoService.validacionesEmpleado(empleadoRequestMapper.requestToDto(empleadoRequestDTO));
+        return ResponseEntity.status(respuestaGeneralDTO.getStatus()).body(respuestaGeneralDTO);
     }
 }
 

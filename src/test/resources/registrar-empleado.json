@@ -1,0 +1,19 @@
+{
+  "codigoEmpleado": "EMP12345",
+  "nombreEmpleado": "Juan",
+  "apellidosEmpleado": "Pérez",
+  "numeroDocumentoEmpleado": "1020304050",
+  "fechaNacimientoEmpleado": "1990-01-15T00:00:00.000Z",
+  "fechaVinculacionCompaniaEmpleado": "2020-06-01T00:00:00.000Z",
+  "cargoFk": {
+    "idCargo": 1,
+    "nombreCargo": "GG"
+  },
+  "tipoDocumentoFk": {
+    "idTipoDocumento": 2,
+    "nombreTipoDocumento": "CC"
+  },
+  "correoEmpleado": "juan.perez@example.com",
+  "salarioEmpleado": 5000.50,
+  "hashPassword": "d2hhdGV2ZXJIZXJlU29tZUhhc2g="
+}

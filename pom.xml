@@ -51,9 +51,18 @@
 			<version>${org.mapstruct.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>com.project</groupId>
 			<artifactId>test.parameta.commons</artifactId>
-			<version>0.0.2</version>
+			<version>0.0.19</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.15.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
@@ -64,6 +73,15 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web-services</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>wsdl4j</groupId>
+			<artifactId>wsdl4j</artifactId>
+			<version>1.6.2</version>
 		</dependency>
 	</dependencies>
 
@@ -126,6 +144,53 @@
 						<configuration>
 							<classifier>javadoc</classifier>
 						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.10</version>
+				<configuration>
+					<rules>
+						<rule>
+							<element>BUNDLE</element>
+							<limits>
+								<!-- Cobertura mínima por líneas -->
+								<limit>
+									<counter>LINE</counter>
+									<value>COVEREDRATIO</value>
+									<minimum>0</minimum>
+								</limit>
+								<!-- Cobertura mínima por métodos -->
+								<limit>
+									<counter>METHOD</counter>
+									<value>COVEREDRATIO</value>
+									<minimum>0</minimum>
+								</limit>
+							</limits>
+						</rule>
+					</rules>
+					<excludes>
+						<exclude>**/configuration/**</exclude>
+						<exclude>**/dto/**</exclude>
+						<exclude>**/soap/**</exclude>
+						<exclude>**/AppApplication.java</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
